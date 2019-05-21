@@ -8,6 +8,7 @@ import scala.collection.mutable.ListBuffer
 import org.apache.hadoop.hbase.TableName
 import org.apache.hadoop.hbase.client.Table
 import scala.collection.JavaConverters._
+import com.common.utils.SetStreamingProperties
 
 class HbaseSink(connection: Connection) extends org.apache.spark.sql.ForeachWriter[TimeseriesDS] {
    val CF_COLUMN_NAME = Bytes.toBytes("IOT")
@@ -15,7 +16,7 @@ class HbaseSink(connection: Connection) extends org.apache.spark.sql.ForeachWrit
    var table:Table = null
 
   def open(partitionId: Long, version: Long): Boolean ={
-      table = connection.getTable(TableName.valueOf(Bytes.toBytes("IOTTIMESERIES")))
+      table = connection.getTable(TableName.valueOf(Bytes.toBytes(SetStreamingProperties.tstablename)))
       true
    }
 

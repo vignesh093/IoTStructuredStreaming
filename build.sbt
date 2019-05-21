@@ -5,11 +5,11 @@ import sbtassembly.MergeStrategy
 
 scalaVersion := "2.11.10"
 
-libraryDependencies += "org.apache.spark" % "spark-core_2.11" % "2.3.1" % "provided"
+libraryDependencies += "org.apache.spark" % "spark-core_2.11" % "2.3.1"
 
-libraryDependencies += "org.apache.spark" % "spark-sql_2.11" % "2.3.1" % "provided"
+libraryDependencies += "org.apache.spark" % "spark-sql_2.11" % "2.3.1"
 
-libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.3.1" % "provided"
+libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.3.1"
 
 libraryDependencies += "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.3.1"
 

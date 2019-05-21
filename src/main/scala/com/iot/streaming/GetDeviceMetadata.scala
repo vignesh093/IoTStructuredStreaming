@@ -13,6 +13,7 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
+import com.common.utils.SetStreamingProperties
 
 object GetDeviceMetadata {
   
@@ -20,11 +21,11 @@ object GetDeviceMetadata {
 
   def getmetadata() : TrieMap[Int,MetadataPOJO] =  {
 		
-		val zkQuorum = "clouderavm01.centralindia.cloudapp.azure.com,clouderavm02.centralindia.cloudapp.azure.com,clouderavm03.centralindia.cloudapp.azure.com"
-		val tableName = "IOTMETADATA"
+		val zkQuorum = SetStreamingProperties.zkQuorum
+		val tableName = SetStreamingProperties.metadatatablename
 		val conf = HBaseConfiguration.create()
 		conf.set("hbase.zookeeper.quorum", zkQuorum)
-		conf.set("hbase.zookeeper.property.clientPort", "2181")
+		conf.set("hbase.zookeeper.property.clientPort", SetStreamingProperties.zkport)
 		var connection:Connection = null
 		var table:Table = null
 		try {

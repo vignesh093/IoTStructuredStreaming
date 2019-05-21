@@ -32,6 +32,7 @@ import org.apache.spark.sql.streaming.GroupStateTimeout
 import org.apache.spark.sql.streaming.GroupState
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.streaming.OutputMode
+import com.common.utils.SetStreamingProperties
 
 case class TimeseriesDS(name: String, timeseries: Integer, connectorid: Integer, deviceid: Integer, eventtime: Timestamp, variableid: String, value: Double, result: String)
 case class EventDS(connectorid: Integer, deviceid: Integer, eventtime: Timestamp, status: String)
@@ -159,9 +160,9 @@ object DataIngestionWithState {
     val df = spark
       .readStream
       .format("kafka")
-      .option("kafka.bootstrap.servers", "clouderavm01.centralindia.cloudapp.azure.com:9092,clouderavm02.centralindia.cloudapp.azure.com:9092,clouderavm03.centralindia.cloudapp.azure.com:9092")
+      .option("kafka.bootstrap.servers", SetStreamingProperties.kafkabootstrap)
       //.option("startingOffsets", "latest")
-      .option("subscribe", "loadtest")
+      .option("subscribe", SetStreamingProperties.inputtopic)
       .load()
 
     val devicemetadata = spark.sparkContext.broadcast(devicemeta) //device metadata broadcasted
@@ -201,13 +202,13 @@ object DataIngestionWithState {
       var connection: Connection = null
 
       def open(partitionId: Long, version: Long): Boolean = {
-        val zkQuorum = "clouderavm01.centralindia.cloudapp.azure.com,clouderavm02.centralindia.cloudapp.azure.com,clouderavm03.centralindia.cloudapp.azure.com"
+        val zkQuorum = SetStreamingProperties.zkQuorum
         val conf = HBaseConfiguration.create()
         conf.set("hbase.zookeeper.quorum", zkQuorum)
-        conf.set("hbase.zookeeper.property.clientPort", "2181")
+        conf.set("hbase.zookeeper.property.clientPort", SetStreamingProperties.zkport)
         connection = ConnectionFactory.createConnection(conf)
-        table = connection.getTable(TableName.valueOf(Bytes.toBytes("IOTTIMESERIES")))
-        table1 = connection.getTable(TableName.valueOf(Bytes.toBytes("IOTTIMESERIES_ERROR")))
+        table = connection.getTable(TableName.valueOf(Bytes.toBytes(SetStreamingProperties.tstablename)))
+        table1 = connection.getTable(TableName.valueOf(Bytes.toBytes(SetStreamingProperties.errortablename)))
         true
       }
 
@@ -254,9 +255,9 @@ object DataIngestionWithState {
     }
 
     //Applying a window on deviceid and variableid to calculate the average value for each variable every 3 minutes
-    val timeseries_window = timeseries_goodrecords.withWatermark("eventtime", "3 minutes")
+    val timeseries_window = timeseries_goodrecords.withWatermark("eventtime", SetStreamingProperties.watermarkwindow)
       .groupBy(
-        window($"eventtime", "3 minutes"),
+        window($"eventtime", SetStreamingProperties.aggtimewindow),
         $"deviceid",
         $"variableid")
       .avg("value")
@@ -274,8 +275,8 @@ object DataIngestionWithState {
       .writeStream
       .outputMode("update")
       .format("kafka")
-      .option("kafka.bootstrap.servers", "clouderavm01.centralindia.cloudapp.azure.com:9092,clouderavm02.centralindia.cloudapp.azure.com:9092,clouderavm03.centralindia.cloudapp.azure.com:9092")
-      .option("topic", "timeserieswindow")
+      .option("kafka.bootstrap.servers", SetStreamingProperties.kafkabootstrap)
+      .option("topic", SetStreamingProperties.outputtopicwindow)
       .option("checkpointLocation", "timeserieswindowchk")
       .start
 
@@ -304,8 +305,8 @@ object DataIngestionWithState {
       .writeStream
       .outputMode("update")
       .format("kafka")
-      .option("kafka.bootstrap.servers", "clouderavm01.centralindia.cloudapp.azure.com:9092,clouderavm02.centralindia.cloudapp.azure.com:9092,clouderavm03.centralindia.cloudapp.azure.com:9092")
-      .option("topic", "devicestate")
+      .option("kafka.bootstrap.servers", SetStreamingProperties.kafkabootstrap)
+      .option("topic", SetStreamingProperties.outputtopicevent)
       .option("checkpointLocation", "devicestatechk")
       .start
 
