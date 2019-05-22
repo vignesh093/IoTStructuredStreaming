@@ -3,8 +3,7 @@ kafka-topics --create -zookeeper adasdemo1:2181,adasdemo2:2181,adasdemo3:2181 --
 kafka-topics -zookeeper adasdemo1:2181,adasdemo2:2181,adasdemo3:2181 --topic demo12 --describe    
 Spark:
 export HADOOP_CONF_DIR="/etc/hadoop/conf"
-/home/demoadmin/spark-2.4.0-bin-hadoop2.6/bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0 --class com.iot.streaming.DataIngestionWithState --master yarn --deploy-mode cluster --num-executors 5 --executor-cores 2 /mdf4/IoTStructuredStreaming/target/scala-2.11/IoTStructuredStreaming-assembly-0.1.jar
-/home/demoadmin/spark-2.4.0-bin-hadoop2.6/bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0 --class com.iot.streaming.DataIngestionWithState --master yarn --deploy-mode cluster /mdf4/IoTStructuredStreaming/target/scala-2.11/IoTStructuredStreaming-assembly-0.1.jar
+/mdf4/spark-2.3.1-bin-hadoop2.6/bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0 --class com.iot.streaming.DataIngestionWithState --master yarn --deploy-mode cluster --num-executors 5 --executor-cores 2 /mdf4/IoTStructuredStreaming/target/scala-2.11/IoTStructuredStreaming-assembly-0.1.jar
+/mdf4/spark-2.3.1-bin-hadoop2.6/bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0 --class com.iot.streaming.DataIngestionWithState --master yarn --deploy-mode cluster /mdf4/IoTStructuredStreaming/target/scala-2.11/IoTStructuredStreaming-assembly-0.1.jar
 Kafka Test data:
 java -cp /home/demoadmin/.m2/repository/com/iot/IoTTestdata/0.0.1-SNAPSHOT/IoTTestdata-0.0.1-SNAPSHOT.jar com.test.generate.GenerateTestData
-
