@@ -1,3 +1,4 @@
+Works only with spark 2.3.1
 kafka-topics --create -zookeeper adasdemo1:2181,adasdemo2:2181,adasdemo3:2181 --replication-factor 2 --partitions 10 --topic demo12
 kafka-topics -zookeeper adasdemo1:2181,adasdemo2:2181,adasdemo3:2181 --topic demo12 --describe    
 Spark:
